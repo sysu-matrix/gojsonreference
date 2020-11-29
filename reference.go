@@ -29,8 +29,6 @@ import (
 	"errors"
 	"net/url"
 	"path/filepath"
-	"runtime"
-	"strings"
 
 	"github.com/xeipuuv/gojsonpointer"
 )
@@ -103,18 +101,7 @@ func (r *JsonReference) parse(jsonReferenceString string) (err error) {
 	}
 
 	r.HasFileScheme = refUrl.Scheme == "file"
-	if runtime.GOOS == "windows" {
-		// on Windows, a file URL may have an extra leading slash, and if it
-		// doesn't then its first component will be treated as the host by the
-		// Go runtime
-		if refUrl.Host == "" && strings.HasPrefix(refUrl.Path, "/") {
-			r.HasFullFilePath = filepath.IsAbs(refUrl.Path[1:])
-		} else {
-			r.HasFullFilePath = filepath.IsAbs(refUrl.Host + refUrl.Path)
-		}
-	} else {
-		r.HasFullFilePath = filepath.IsAbs(refUrl.Path)
-	}
+	r.HasFullFilePath = filepath.IsAbs(refUrl.Path)
 
 	// invalid json-pointer error means url has no json-pointer fragment. simply ignore error
 	r.referencePointer, _ = gojsonpointer.NewJsonPointer(refUrl.Fragment)
