@@ -28,7 +28,6 @@ package gojsonreference
 import (
 	"errors"
 	"net/url"
-	"path/filepath"
 
 	"github.com/xeipuuv/gojsonpointer"
 )
@@ -101,7 +100,7 @@ func (r *JsonReference) parse(jsonReferenceString string) (err error) {
 	}
 
 	r.HasFileScheme = refUrl.Scheme == "file"
-	r.HasFullFilePath = filepath.IsAbs(refUrl.Path)
+	r.HasFullFilePath = true
 
 	// invalid json-pointer error means url has no json-pointer fragment. simply ignore error
 	r.referencePointer, _ = gojsonpointer.NewJsonPointer(refUrl.Fragment)
